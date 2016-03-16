@@ -39,17 +39,32 @@ typedef PolyListWanqi* PolyListPtrWanqi;
 //Function Prototypes
 
 void mainMenuWanqiC(void);
+void subMenuWanqiC(void);
 FractionPtrWanqi createFractionWanqiC(void);
 int findGCDWanqiC(int, int);
 PolyTermPtrWanqi createPolyTermWanqiC(void);
 PolyNodePtrWanqi createPolyNodeWanqiC(void);
-
+int insertPolyNodeWanqiC(PolyListPtrWanqi, PolyNodePtrWanqi);
+int removePolyNodeWanqiC(PolyListPtrWanqi, int);
 
 //Program Drive
 
 int main() {
 
-  int mainSelection;
+  int mainSelection, subSelection, result;
+  PolyNodePtrWanqi tempNodePtr = NULL;
+
+  PolyListPtrWanqi leftPolyListPtr;
+  PolyListPtrWanqi rightPolyListPtr;
+
+  PolyListWanqi leftPolyList = (PolyListWanqi) malloc(
+                                          sizeof(PolyNodeWanqi));
+
+  PolyListWanqi rightPolyList= (PolyListWanqi) malloc(
+                                          sizeof(PolyNodeWanqi));
+
+  leftPolyListPtr = &leftPolyList;
+  rightPolyListPtr = &rightPolyList;
 
   printf("CIS 27 - C Programming\n"
          "Laney College\n"
@@ -66,6 +81,30 @@ int main() {
 
     switch(mainSelection) {
       case 1:
+        do {
+          subMenuWanqiC();
+          scanf("%d", &subSelection);
+
+          if (subSelection == 1){
+            tempNodePtr = createPolyNodeWanqiC();
+            result = insertPolyNodeWanqiC(leftPolyListPtr, tempNodePtr);
+
+            if(result == 1)
+              printf("\t  Poly Node successfully inserted!");
+            else
+              printf("\t  Something went wrong!");
+          } else if (subSelection == 2) {
+              tempNodePtr = createPolyNodeWanqiC();
+              result = insertPolyNodeWanqiC(rightPolyListPtr, tempNodePtr);
+
+              if(result == 1)
+                printf("\t  Poly Node successfully inserted!");
+              else
+                printf("\t  Something went wrong!");
+          } else 
+            printf("\tYou should not be in this class!");
+          
+        } while (subSelection != 3);
         break;
       case 2:
         break;
@@ -90,16 +129,28 @@ int main() {
 
 void mainMenuWanqiC() {
 
-  printf("\n*********************************\n"
-             "*     POLYNOMIAL OPERATIONS   *\n"
-             "* 1.  Creating polynomials    *\n"
-             "* 2.  Adding polynomials      *\n"
-             "* 3.  Multiplying polynomials *\n"
-             "* 4.  Displaying polynomials  *\n"
-             "* 5.  Clearing polynomials    *\n"
-             "* 6.  Quit                    *\n"
-             "************************************\n"
-             "Select the option (1 through 6): ");
+  printf("\n*******************************\n"
+           "*     POLYNOMIAL OPERATIONS   *\n"
+           "* 1.  Creating polynomials    *\n"
+           "* 2.  Adding polynomials      *\n"
+           "* 3.  Multiplying polynomials *\n"
+           "* 4.  Displaying polynomials  *\n"
+           "* 5.  Clearing polynomials    *\n"
+           "* 6.  Quit                    *\n"
+           "*******************************\n"
+            "Select the option (1 through 6): ");
+
+}
+
+void subMenuWanqiC() {
+
+  printf("\n\t***************************\n"
+           "\t*     CREATE POLYNOMIAL   *\n"
+           "\t* 1.  Left Polynomial     *\n"
+           "\t* 2.  Right polynomial    *\n"
+           "\t* 3.  Back                *\n"
+           "\t***************************\n"
+           "\tSelect the option (1 through 3): ");
 
 }
 
@@ -175,6 +226,12 @@ PolyNodePtrWanqi createPolyNodeWanqiC() {
 
   return myPolyNodePtr;
 }
+
+int insertPolyNodeWanqiC(PolyListPtrWanqi myListPtr, 
+                                        PolyNodePtrWanqi myNodePtr) {
+  return 1;
+}
+
 
 
 
