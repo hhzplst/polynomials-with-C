@@ -45,7 +45,10 @@ int findGCDWanqiC(int, int);
 PolyTermPtrWanqi createPolyTermWanqiC(void);
 PolyNodePtrWanqi createPolyNodeWanqiC(void);
 int insertPolyNodeWanqiC(PolyListPtrWanqi, PolyNodePtrWanqi);
+FractionPtrWanqi addFractionWanqiC(FractionPtrWanqi, FractionPtrWanqi);
 int removePolyNodeWanqiC(PolyListPtrWanqi, int);
+void printPolyWanqiC(PolyNodePtrWanqi);
+void displayPolyWanqiC(PolyListWanqi);
 
 //Program Drive
 
@@ -54,14 +57,14 @@ int main() {
   int mainSelection, subSelection, result;
   PolyNodePtrWanqi tempNodePtr = NULL;
 
-  PolyListPtrWanqi leftPolyListPtr;
-  PolyListPtrWanqi rightPolyListPtr;
+  PolyListWanqi leftPolyList = NULL;
+  PolyListWanqi rightPolyList = NULL;
 
-  PolyListWanqi leftPolyList = (PolyListWanqi) malloc(
-                                          sizeof(PolyNodeWanqi));
+  PolyListPtrWanqi leftPolyListPtr = (PolyListPtrWanqi) malloc(
+                                          sizeof(PolyListWanqi));
 
-  PolyListWanqi rightPolyList= (PolyListWanqi) malloc(
-                                          sizeof(PolyNodeWanqi));
+  PolyListPtrWanqi rightPolyListPtr= (PolyListPtrWanqi) malloc(
+                                          sizeof(PolyListWanqi));
 
   leftPolyListPtr = &leftPolyList;
   rightPolyListPtr = &rightPolyList;
@@ -90,9 +93,9 @@ int main() {
             result = insertPolyNodeWanqiC(leftPolyListPtr, tempNodePtr);
 
             if(result == 1)
-              printf("\t  Poly Node successfully inserted!");
+              printf("\n\tPoly Node successfully inserted!");
             else
-              printf("\t  Something went wrong!");
+              printf("\n\t  Something went wrong!");
           } else if (subSelection == 2) {
               tempNodePtr = createPolyNodeWanqiC();
               result = insertPolyNodeWanqiC(rightPolyListPtr, tempNodePtr);
@@ -101,7 +104,7 @@ int main() {
                 printf("\t  Poly Node successfully inserted!");
               else
                 printf("\t  Something went wrong!");
-          } else 
+          } else if (subSelection != 3)
             printf("\tYou should not be in this class!");
           
         } while (subSelection != 3);
@@ -111,6 +114,11 @@ int main() {
       case 3:
         break;
       case 4:
+        printf("\n\tLeft Poly Pointer: %p\n", leftPolyList);
+        displayPolyWanqiC(leftPolyList);
+
+        printf("\n\tRight Poly Pointer: %p\n", rightPolyList);
+        displayPolyWanqiC(rightPolyList);
         break;
       case 5:
         break;
@@ -129,7 +137,7 @@ int main() {
 
 void mainMenuWanqiC() {
 
-  printf("\n*******************************\n"
+  printf("\n\n*******************************\n"
            "*     POLYNOMIAL OPERATIONS   *\n"
            "* 1.  Creating polynomials    *\n"
            "* 2.  Adding polynomials      *\n"
@@ -144,13 +152,13 @@ void mainMenuWanqiC() {
 
 void subMenuWanqiC() {
 
-  printf("\n\t***************************\n"
-           "\t*     CREATE POLYNOMIAL   *\n"
-           "\t* 1.  Left Polynomial     *\n"
-           "\t* 2.  Right polynomial    *\n"
-           "\t* 3.  Back                *\n"
-           "\t***************************\n"
-           "\tSelect the option (1 through 3): ");
+  printf("\n\n  ***************************\n"
+           "  *     CREATE POLYNOMIAL   *\n"
+           "  * 1.  Left Polynomial     *\n"
+           "  * 2.  Right polynomial    *\n"
+           "  * 3.  Back                *\n"
+           "  ***************************\n"
+           "  Select the option (1 through 3): ");
 
 }
 
@@ -160,10 +168,11 @@ FractionPtrWanqi createFractionWanqiC() {
 
   myFractionPtr = (FractionPtrWanqi) malloc(sizeof(FractionWanqi));
 
-  printf("\n       Please Enter the Numerator: ");
+  printf("\n\tCreating the Coefficient..."
+         "\n\tPlease Enter the Numerator: ");
   scanf("%d", &numTemp);
   do {
-    printf("\n       Please Enter a valid Denominator: ");
+    printf("\tPlease Enter a valid Denominator: ");
     scanf("%d", &denomTemp);
   } while (denomTemp == 0);
 
@@ -201,11 +210,12 @@ PolyTermPtrWanqi createPolyTermWanqiC() {
   FractionPtrWanqi tempFractionPtr = NULL;
 
   myPolyTermPtr = (PolyTermPtrWanqi) malloc(sizeof(PolyTermWanqi));
+  printf("\n\tCreating a Term...");
 
   do {
-    printf("\n       Please Enter the order: ");
+    printf("\n\tPlease Enter the order: ");
     scanf("%d", &order);
-  } while (order > 0);
+  } while (order < 0);
 
   tempFractionPtr = createFractionWanqiC();
   myPolyTermPtr->ex = order;
@@ -229,9 +239,112 @@ PolyNodePtrWanqi createPolyNodeWanqiC() {
 
 int insertPolyNodeWanqiC(PolyListPtrWanqi myListPtr, 
                                         PolyNodePtrWanqi myNodePtr) {
+  int found = 0;
+  FractionPtrWanqi tempFractionPtr = NULL;
+  PolyNodePtrWanqi currentNodePtr = *myListPtr;
+
+  if (*myListPtr == NULL) {
+    *myListPtr = myNodePtr;
+  } else if (currentNodePtr->next == NULL){
+    //one node in ths list
+    if(myNodePtr->ptPtr->ex == currentNodePtr->ptPtr->ex) {
+      //adding the coefficient
+      tempFractionPtr = addFractionWanqiC(currentNodePtr->ptPtr->coePtr, 
+                                              myNodePtr->ptPtr->coePtr);
+      //update the fraction ptr
+      currentNodePtr->ptPtr->coePtr = tempFractionPtr;
+      //free Term and Node 
+      free(myNodePtr->ptPtr);
+      free(myNodePtr);
+    } else if (myNodePtr->ptPtr->ex > currentNodePtr->ptPtr->ex) {
+      *myListPtr = myNodePtr;
+      myNodePtr->next = currentNodePtr;
+    } else 
+      currentNodePtr->next = myNodePtr;
+  } else {
+    // more than one node in the list
+    if (myNodePtr->ptPtr->ex > currentNodePtr->ptPtr->ex) {
+      *myListPtr = myNodePtr;
+      myNodePtr->next = currentNodePtr;
+    } else {
+      while(currentNodePtr != NULL && found==0) {
+        if(myNodePtr->ptPtr->ex == currentNodePtr->ptPtr->ex) {
+          //adding the coefficient
+          tempFractionPtr = addFractionWanqiC(currentNodePtr->ptPtr->coePtr, 
+                                                  myNodePtr->ptPtr->coePtr);
+          //update the fraction ptr
+          currentNodePtr->ptPtr->coePtr = tempFractionPtr;
+          //free Term and Node
+          free(myNodePtr->ptPtr);
+          found = 1;
+        } else if (myNodePtr->ptPtr->ex < currentNodePtr->ptPtr->ex && 
+                          currentNodePtr->next == NULL) {
+          //currentNode is the last node in the list
+          currentNodePtr->next = myNodePtr;
+          found = 1;
+        } else if (myNodePtr->ptPtr->ex > currentNodePtr->next->ptPtr->ex) {
+          myNodePtr->next = currentNodePtr->next;
+          currentNodePtr->next = myNodePtr;
+          found = 1;
+        } 
+        currentNodePtr = currentNodePtr->next;
+      }
+    }
+  }
+
   return 1;
 }
 
+FractionPtrWanqi addFractionWanqiC(FractionPtrWanqi a, FractionPtrWanqi b) {
+  int gcd, numTemp, denomTemp;
+  FractionPtrWanqi resultFractionPtr = NULL;
+
+  resultFractionPtr = (FractionPtrWanqi) malloc(sizeof(FractionWanqi));
+
+  numTemp = (a->num)*(b->denom) + (b->num)*(a->denom);
+  denomTemp = (a->denom)*(b->denom);
+  gcd = findGCDWanqiC(numTemp, denomTemp);
+
+  resultFractionPtr->num = numTemp/gcd;
+  resultFractionPtr->denom = denomTemp/gcd;
+
+  free(a);
+  free(b);
+  return resultFractionPtr;
+}
+
+void printPolyWanqiC(PolyNodePtrWanqi myPolyNodePtr) {
+  int order = myPolyNodePtr->ptPtr->ex;
+  int num = myPolyNodePtr->ptPtr->coePtr->num;
+  int denom = myPolyNodePtr->ptPtr->coePtr->denom;
+  int adjNum = (num>0)? num:-num;
+
+  if (num>0) {
+    if (order ==0)
+      printf(" + %d/%d", adjNum, denom);
+    else
+      printf(" + %d/%dx%d", adjNum, denom, order);
+  } else {
+    if (order ==0)
+      printf(" - %d/%d", adjNum, denom);
+    else
+      printf(" - %d/%dx%d", adjNum, denom, order);
+  }
+}
+
+void displayPolyWanqiC(PolyListWanqi myPolyList) {
+  PolyNodePtrWanqi currentNodePtr = myPolyList;
+  if (myPolyList != NULL) {
+    printf("\t  ");
+    while(currentNodePtr) {
+      if (currentNodePtr->ptPtr->coePtr->num != 0)
+        printPolyWanqiC(currentNodePtr);
+      currentNodePtr = currentNodePtr->next;
+    }
+  } else {
+    printf("\t  Empty List!");
+  }
+}
 
 
 
@@ -246,4 +359,4 @@ int insertPolyNodeWanqiC(PolyListPtrWanqi myListPtr,
 
                     NO COMMENT
 
-**************************************************/
+**************************************************/ 
