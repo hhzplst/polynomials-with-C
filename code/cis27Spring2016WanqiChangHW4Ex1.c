@@ -50,6 +50,9 @@ int removePolyNodeWanqiC(PolyListPtrWanqi, int);
 void printPolyWanqiC(PolyNodePtrWanqi);
 void displayPolyWanqiC(PolyListWanqi);
 
+PolyListPtrWanqi addPolyWanqiC(PolyListWanqi, PolyListWanqi);
+PolyListPtrWanqi multiplyPolyWanqiC(PolyListWanqi, PolyListWanqi);
+
 //Program Drive
 
 int main() {
@@ -110,8 +113,12 @@ int main() {
         } while (subSelection != 3);
         break;
       case 2:
+        if (leftPolyList == NULL || rightPolyList == NULL)
+          printf("\t  Both Left and Right Polylist should be created first!");
         break;
       case 3:
+        if (leftPolyList == NULL || rightPolyList == NULL)
+          printf("\t  Both Left and Right Polylist should be created first!");
         break;
       case 4:
         printf("\n\tLeft Poly Pointer: %p\n", leftPolyList);
