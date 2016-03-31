@@ -2,7 +2,7 @@
 *   Program Name: cis27Spring2016WanqiChangHW4Ex1.c
 *   Discussion:   Lab4 Exercise #1
 *   Written By:   Wanqi Chang
-*   Date:         2016/03/
+*   Date:         2016/04/05
 ************************************************************/
 
 #include <stdio.h>
@@ -62,6 +62,8 @@ int main() {
 
   PolyListWanqi leftPolyList = NULL;
   PolyListWanqi rightPolyList = NULL;
+  PolyListWanqi addResultPolyList = NULL;
+  PolyListWanqi multiResultPolyList = NULL;
 
   PolyListPtrWanqi leftPolyListPtr = (PolyListPtrWanqi) malloc(
                                           sizeof(PolyListWanqi));
@@ -69,17 +71,25 @@ int main() {
   PolyListPtrWanqi rightPolyListPtr= (PolyListPtrWanqi) malloc(
                                           sizeof(PolyListWanqi));
 
+  PolyListPtrWanqi addResultPolyListPtr = (PolyListPtrWanqi) malloc(
+                                            sizeof(PolyListWanqi));
+
+  PolyListPtrWanqi multiResultPolyListPtr = (PolyListPtrWanqi) malloc(
+                                            sizeof(PolyListWanqi));
+
   leftPolyListPtr = &leftPolyList;
   rightPolyListPtr = &rightPolyList;
+  addResultPolyListPtr = &addResultPolyList;
+  multiResultPolyListPtr = &multiResultPolyList;
 
-  printf("CIS 27 - C Programming\n"
+  printf("CIS 27 - Data Structures and Algorithms\n"
          "Laney College\n"
          "Wanqi Chang\n\n"
          "Assignment Information --\n"
          "  Assignment Number:  Homework 04,\n"
          "                      Coding Assignment -- Excercise #1\n"
          "  Written by:         Wanqi Chang\n"
-         "  Submitted Date:     2016/03/29\n");
+         "  Submitted Date:     2016/04/05\n");
 
   do {
     mainMenuWanqiC();
@@ -87,6 +97,10 @@ int main() {
 
     switch(mainSelection) {
       case 1:
+        if (addResultPolyList)
+          free(addResultPolyList);
+        if (multiResultPolyList)
+          free(multiResultPolyList);
         do {
           subMenuWanqiC();
           scanf("%d", &subSelection);
@@ -114,11 +128,16 @@ int main() {
         break;
       case 2:
         if (leftPolyList == NULL || rightPolyList == NULL)
-          printf("\t  Both Left and Right Polylist should be created first!");
+          printf("\n\tBoth Left and Right Polylist should be created first!");
+        else {
+          printf("\n\tAdding the Polynomials...");
+          addResultPolyListPtr = addPolyWanqiC(leftPolyList, rightPolyList);
+          printf("\n\tDone!");
+        }
         break;
       case 3:
         if (leftPolyList == NULL || rightPolyList == NULL)
-          printf("\t  Both Left and Right Polylist should be created first!");
+          printf("\t  Both Left and Right Polylists should be created first!");
         break;
       case 4:
         printf("\n\tLeft Poly Pointer: %p\n", leftPolyList);
@@ -126,6 +145,14 @@ int main() {
 
         printf("\n\tRight Poly Pointer: %p\n", rightPolyList);
         displayPolyWanqiC(rightPolyList);
+
+        printf("\n\tLastest Add Result Pointer\n\t(perform another add operation to see the new result): %p\n", 
+                                                                                      *addResultPolyListPtr);
+        displayPolyWanqiC(*addResultPolyListPtr);
+
+        printf("\n\tLastest Multiply Result Pointer\n\t(perform another add operation to see the new result): %p\n", 
+                                                                                      *multiResultPolyListPtr);
+        displayPolyWanqiC(*multiResultPolyListPtr);
         break;
       case 5:
         break;
@@ -315,8 +342,6 @@ FractionPtrWanqi addFractionWanqiC(FractionPtrWanqi a, FractionPtrWanqi b) {
   resultFractionPtr->num = numTemp/gcd;
   resultFractionPtr->denom = denomTemp/gcd;
 
-  free(a);
-  free(b);
   return resultFractionPtr;
 }
 
@@ -342,7 +367,13 @@ void printPolyWanqiC(PolyNodePtrWanqi myPolyNodePtr) {
 void displayPolyWanqiC(PolyListWanqi myPolyList) {
   PolyNodePtrWanqi currentNodePtr = myPolyList;
   if (myPolyList != NULL) {
-    printf("\t  ");
+    //printing first node
+    if (currentNodePtr->ptPtr->ex == 0)
+      printf("\t  %d/%d", currentNodePtr->ptPtr->coePtr->num, currentNodePtr->ptPtr->coePtr->denom);
+    else
+      printf("\t  %d/%dx%d", currentNodePtr->ptPtr->coePtr->num, currentNodePtr->ptPtr->coePtr->denom, 
+                                                                    currentNodePtr->ptPtr->ex);
+    currentNodePtr = currentNodePtr->next;
     while(currentNodePtr) {
       if (currentNodePtr->ptPtr->coePtr->num != 0)
         printPolyWanqiC(currentNodePtr);
@@ -352,6 +383,103 @@ void displayPolyWanqiC(PolyListWanqi myPolyList) {
     printf("\t  Empty List!");
   }
 }
+
+PolyListPtrWanqi addPolyWanqiC(PolyListWanqi leftPolyList, PolyListWanqi rightPolyList) {
+  PolyListPtrWanqi resultPolyListPtr = (PolyListPtrWanqi) malloc(sizeof(PolyListWanqi));
+
+  PolyTermPtrWanqi tempPolyTermPtr = (PolyTermPtrWanqi) malloc(sizeof(PolyTermWanqi));
+  PolyNodePtrWanqi tempPolyNodePtr = (PolyNodePtrWanqi) malloc(sizeof(PolyNodeWanqi));
+  tempPolyNodePtr->ptPtr = tempPolyTermPtr;
+
+  tempPolyNodePtr->next = NULL;
+  *resultPolyListPtr = tempPolyNodePtr;
+
+  PolyNodePtrWanqi currentLeftNodePtr = leftPolyList;
+  PolyNodePtrWanqi currentRightNodePtr = rightPolyList;
+
+  FractionPtrWanqi tempFractionPtr = NULL;
+
+  while (currentLeftNodePtr && currentRightNodePtr) {
+    
+    if (currentLeftNodePtr->ptPtr->ex > currentRightNodePtr->ptPtr->ex) {
+      tempPolyNodePtr->ptPtr = currentLeftNodePtr->ptPtr;
+      currentLeftNodePtr = currentLeftNodePtr->next;
+    } else if (currentLeftNodePtr->ptPtr->ex < currentRightNodePtr->ptPtr->ex) {
+      tempPolyNodePtr->ptPtr = currentRightNodePtr->ptPtr;
+      currentRightNodePtr = currentRightNodePtr->next;
+    } else {
+      tempFractionPtr = addFractionWanqiC(currentLeftNodePtr->ptPtr->coePtr, currentRightNodePtr->ptPtr->coePtr);
+      tempPolyNodePtr->ptPtr->ex = currentLeftNodePtr->ptPtr->ex;
+      tempPolyNodePtr->ptPtr->coePtr= tempFractionPtr;
+      currentLeftNodePtr = currentLeftNodePtr->next;
+      currentRightNodePtr = currentRightNodePtr->next;
+    }
+    if (currentLeftNodePtr && currentRightNodePtr) {
+      tempPolyNodePtr->next = (PolyNodePtrWanqi) malloc(sizeof(PolyNodeWanqi));
+      tempPolyNodePtr = tempPolyNodePtr->next;
+      tempPolyNodePtr->next = NULL;
+    }
+  }
+  while (currentLeftNodePtr || currentRightNodePtr) {
+    tempPolyNodePtr->next = (PolyNodePtrWanqi) malloc(sizeof(PolyNodeWanqi));
+    tempPolyNodePtr = tempPolyNodePtr->next;
+    tempPolyNodePtr->next = NULL;
+    if (currentLeftNodePtr) {
+      tempPolyNodePtr->ptPtr = currentLeftNodePtr->ptPtr;
+      currentLeftNodePtr = currentLeftNodePtr->next;
+    }
+    if (currentRightNodePtr) {
+      tempPolyNodePtr->ptPtr = currentRightNodePtr->ptPtr;
+      currentRightNodePtr = currentRightNodePtr->next;
+    }
+  }
+  return resultPolyListPtr;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -366,4 +494,4 @@ void displayPolyWanqiC(PolyListWanqi myPolyList) {
 
                     NO COMMENT
 
-**************************************************/ 
+**************************************************/
