@@ -40,6 +40,7 @@ typedef PolyListWanqi* PolyListPtrWanqi;
 
 void mainMenuWanqiC(void);
 void subMenuWanqiC(void);
+void removeMenuWanqiC(void);
 FractionPtrWanqi createFractionWanqiC(void);
 int findGCDWanqiC(int, int);
 PolyTermPtrWanqi createPolyTermWanqiC(void);
@@ -47,6 +48,7 @@ PolyNodePtrWanqi createPolyNodeWanqiC(void);
 int insertPolyNodeWanqiC(PolyListPtrWanqi, PolyNodePtrWanqi);
 FractionPtrWanqi addFractionWanqiC(FractionPtrWanqi, FractionPtrWanqi);
 int removePolyNodeWanqiC(PolyListPtrWanqi, int);
+int performRemovePolyNodeWanqiC(PolyListPtrWanqi);
 void printPolyWanqiC(PolyNodePtrWanqi);
 void displayPolyWanqiC(PolyListWanqi);
 
@@ -57,7 +59,7 @@ PolyListPtrWanqi multiplyPolyWanqiC(PolyListWanqi, PolyListWanqi);
 
 int main() {
 
-  int mainSelection, subSelection, result;
+  int mainSelection, subSelection, removeSelection, result;
   PolyNodePtrWanqi tempNodePtr = NULL;
 
   PolyListWanqi leftPolyList = NULL;
@@ -155,6 +157,33 @@ int main() {
         displayPolyWanqiC(*multiResultPolyListPtr);
         break;
       case 5:
+        do {
+          removeMenuWanqiC();
+          scanf("%d", &removeSelection);
+
+          switch(removeSelection) {
+            case 1:
+              printf("\n\tRemoving from the Left Polynomial...");
+              result = performRemovePolyNodeWanqiC(leftPolyListPtr);
+              if (result == 1)
+                printf("\n\tDone!");
+              else
+                printf("\n\tSomething went wrong...");
+              break;
+            case 2:
+              printf("\n\tRemoving from the Right Polynomial...");
+              result = performRemovePolyNodeWanqiC(rightPolyListPtr);
+              if (result == 1)
+                printf("\n\tDone!");
+              else
+                printf("\n\tSomething went wrong...");
+              break;
+            case 3:
+              break;
+            defalt:
+              printf("\tWrong Option!");
+          }
+        } while (removeSelection != 3);
         break;
       case 6:
         exit(0);
@@ -187,13 +216,24 @@ void mainMenuWanqiC() {
 void subMenuWanqiC() {
 
   printf("\n\n  ***************************\n"
-           "  *     CREATE POLYNOMIAL   *\n"
-           "  * 1.  Left Polynomial     *\n"
-           "  * 2.  Right polynomial    *\n"
-           "  * 3.  Back                *\n"
-           "  ***************************\n"
-           "  Select the option (1 through 3): ");
+             "  *     CREATE POLYNOMIAL   *\n"
+             "  * 1.  Left Polynomial     *\n"
+             "  * 2.  Right polynomial    *\n"
+             "  * 3.  Back                *\n"
+             "  ***************************\n"
+             "  Select the option (1 through 3): ");
 
+}
+
+void removeMenuWanqiC() {
+
+  printf("\n\n  ***************************\n"
+             "  *     CLEAR POLYNOMIAL    *\n"
+             "  * 1.  Left Polynomial     *\n"
+             "  * 2.  Right polynomial    *\n"
+             "  * 3.  Back                *\n"
+             "  ***************************\n"
+             "  Select the option (1 through 3): ");
 }
 
 FractionPtrWanqi createFractionWanqiC() {
@@ -345,6 +385,49 @@ FractionPtrWanqi addFractionWanqiC(FractionPtrWanqi a, FractionPtrWanqi b) {
   return resultFractionPtr;
 }
 
+int removePolyNodeWanqiC(PolyListPtrWanqi myPolyListPtr, int order) {
+  int found = 0, step = 0;
+  PolyNodePtrWanqi prev = NULL;
+  PolyNodePtrWanqi cur = *myPolyListPtr; 
+  while(cur && !found) {
+    if (cur->ptPtr->ex == order) {
+      if (step == 0)
+        *myPolyListPtr = cur->next;
+      else {
+        prev->next = cur->next;
+        free(cur->ptPtr->coePtr);
+        free(cur->ptPtr);
+        free(cur);
+      }
+      found = 1;
+    }
+    prev = cur;
+    cur = cur->next;
+    step++;
+  }
+  
+  if (found == 0) {
+    printf("\t\nCan't find the node with order %d!", order);
+    return 0; 
+  }
+
+  return 1;
+}
+
+int performRemovePolyNodeWanqiC(PolyListPtrWanqi myPolyListPtr) {
+  int order, result;
+  if (*myPolyListPtr == NULL) {
+    printf("\n\tCan't remove from Empty List!");
+    return 0;
+  }
+  printf("\n\tWhich order would you like to remove: ");
+  scanf("%d", &order);
+
+  result = removePolyNodeWanqiC(myPolyListPtr, order);
+
+  return result;
+}
+
 void printPolyWanqiC(PolyNodePtrWanqi myPolyNodePtr) {
   int order = myPolyNodePtr->ptPtr->ex;
   int num = myPolyNodePtr->ptPtr->coePtr->num;
@@ -352,13 +435,17 @@ void printPolyWanqiC(PolyNodePtrWanqi myPolyNodePtr) {
   int adjNum = (num>0)? num:-num;
 
   if (num>0) {
-    if (order ==0)
+    if (order == 0)
       printf(" + %d/%d", adjNum, denom);
-    else
+    else if (order == 1)
+      printf(" + %d/%dx", adjNum, denom);
+    else 
       printf(" + %d/%dx%d", adjNum, denom, order);
   } else {
     if (order ==0)
       printf(" - %d/%d", adjNum, denom);
+    else if (order == 1)
+      printf(" - %d/%dx", adjNum, denom);
     else
       printf(" - %d/%dx%d", adjNum, denom, order);
   }
@@ -416,14 +503,19 @@ PolyListPtrWanqi addPolyWanqiC(PolyListWanqi leftPolyList, PolyListWanqi rightPo
     }
     if (currentLeftNodePtr && currentRightNodePtr) {
       tempPolyNodePtr->next = (PolyNodePtrWanqi) malloc(sizeof(PolyNodeWanqi));
+      tempPolyNodePtr->next->ptPtr = (PolyTermPtrWanqi) malloc(sizeof(PolyTermWanqi));
+      
       tempPolyNodePtr = tempPolyNodePtr->next;
       tempPolyNodePtr->next = NULL;
     }
   }
   while (currentLeftNodePtr || currentRightNodePtr) {
     tempPolyNodePtr->next = (PolyNodePtrWanqi) malloc(sizeof(PolyNodeWanqi));
+    tempPolyNodePtr->next->ptPtr = (PolyTermPtrWanqi) malloc(sizeof(PolyTermWanqi));
+
     tempPolyNodePtr = tempPolyNodePtr->next;
     tempPolyNodePtr->next = NULL;
+
     if (currentLeftNodePtr) {
       tempPolyNodePtr->ptPtr = currentLeftNodePtr->ptPtr;
       currentLeftNodePtr = currentLeftNodePtr->next;
