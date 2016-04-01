@@ -41,14 +41,20 @@ typedef PolyListWanqi* PolyListPtrWanqi;
 void mainMenuWanqiC(void);
 void subMenuWanqiC(void);
 void removeMenuWanqiC(void);
-FractionPtrWanqi createFractionWanqiC(void);
+
 int findGCDWanqiC(int, int);
+FractionPtrWanqi createFractionWanqiC(void);
+FractionPtrWanqi addFractionWanqiC(FractionPtrWanqi, FractionPtrWanqi);
+FractionPtrWanqi multiplyFractionWanqiC(FractionPtrWanqi, FractionPtrWanqi);
+
 PolyTermPtrWanqi createPolyTermWanqiC(void);
 PolyNodePtrWanqi createPolyNodeWanqiC(void);
+PolyNodePtrWanqi createEmptyPolyNodeWanqiC(void);
+
 int insertPolyNodeWanqiC(PolyListPtrWanqi, PolyNodePtrWanqi);
-FractionPtrWanqi addFractionWanqiC(FractionPtrWanqi, FractionPtrWanqi);
 int removePolyNodeWanqiC(PolyListPtrWanqi, int);
 int performRemovePolyNodeWanqiC(PolyListPtrWanqi);
+
 void printPolyWanqiC(PolyNodePtrWanqi);
 void displayPolyWanqiC(PolyListWanqi);
 
@@ -67,17 +73,17 @@ int main() {
   PolyListWanqi addResultPolyList = NULL;
   PolyListWanqi multiResultPolyList = NULL;
 
-  PolyListPtrWanqi leftPolyListPtr = (PolyListPtrWanqi) malloc(
-                                          sizeof(PolyListWanqi));
+  PolyListPtrWanqi leftPolyListPtr = (PolyListPtrWanqi) malloc
+                                        (sizeof(PolyListWanqi));
 
-  PolyListPtrWanqi rightPolyListPtr= (PolyListPtrWanqi) malloc(
-                                          sizeof(PolyListWanqi));
+  PolyListPtrWanqi rightPolyListPtr= (PolyListPtrWanqi) malloc
+                                        (sizeof(PolyListWanqi));
 
-  PolyListPtrWanqi addResultPolyListPtr = (PolyListPtrWanqi) malloc(
-                                            sizeof(PolyListWanqi));
+  PolyListPtrWanqi addResultPolyListPtr = (PolyListPtrWanqi) malloc
+                                            (sizeof(PolyListWanqi));
 
-  PolyListPtrWanqi multiResultPolyListPtr = (PolyListPtrWanqi) malloc(
-                                            sizeof(PolyListWanqi));
+  PolyListPtrWanqi multiResultPolyListPtr = (PolyListPtrWanqi) malloc
+                                              (sizeof(PolyListWanqi));
 
   leftPolyListPtr = &leftPolyList;
   rightPolyListPtr = &rightPolyList;
@@ -107,11 +113,11 @@ int main() {
           subMenuWanqiC();
           scanf("%d", &subSelection);
 
-          if (subSelection == 1){
+          if (subSelection == 1) {
             tempNodePtr = createPolyNodeWanqiC();
             result = insertPolyNodeWanqiC(leftPolyListPtr, tempNodePtr);
 
-            if(result == 1)
+            if (result == 1)
               printf("\n\tPoly Node successfully inserted!");
             else
               printf("\n\t  Something went wrong!");
@@ -119,8 +125,8 @@ int main() {
               tempNodePtr = createPolyNodeWanqiC();
               result = insertPolyNodeWanqiC(rightPolyListPtr, tempNodePtr);
 
-              if(result == 1)
-                printf("\t  Poly Node successfully inserted!");
+              if (result == 1)
+                printf("\n\tPoly Node successfully inserted!");
               else
                 printf("\t  Something went wrong!");
           } else if (subSelection != 3)
@@ -139,7 +145,12 @@ int main() {
         break;
       case 3:
         if (leftPolyList == NULL || rightPolyList == NULL)
-          printf("\t  Both Left and Right Polylists should be created first!");
+          printf("\n\tBoth Left and Right Polylists should be created first!");
+        else {
+          printf("\n\tMultiplying the Polynomials...");
+          multiResultPolyListPtr = multiplyPolyWanqiC(leftPolyList, rightPolyList);
+          printf("\n\tDone!");
+        }
         break;
       case 4:
         printf("\n\tLeft Poly Pointer: %p\n", leftPolyList);
@@ -186,11 +197,11 @@ int main() {
         } while (removeSelection != 3);
         break;
       case 6:
+        printf("\n\tHaving Fun!\n");
         exit(0);
       default:
         printf("\tYou should not be in this class!");
     }
-
   } while (mainSelection != 6);
 
   return 0;
@@ -234,32 +245,7 @@ void removeMenuWanqiC() {
              "  * 3.  Back                *\n"
              "  ***************************\n"
              "  Select the option (1 through 3): ");
-}
 
-FractionPtrWanqi createFractionWanqiC() {
-  int numTemp, denomTemp, gcd;
-  FractionPtrWanqi myFractionPtr = NULL;
-
-  myFractionPtr = (FractionPtrWanqi) malloc(sizeof(FractionWanqi));
-
-  printf("\n\tCreating the Coefficient..."
-         "\n\tPlease Enter the Numerator: ");
-  scanf("%d", &numTemp);
-  do {
-    printf("\tPlease Enter a valid Denominator: ");
-    scanf("%d", &denomTemp);
-  } while (denomTemp == 0);
-
-  gcd = findGCDWanqiC(numTemp, denomTemp);
-  myFractionPtr->num = numTemp/gcd;
-
-  if (denomTemp < 0) {
-    myFractionPtr->num = -myFractionPtr->num;
-    myFractionPtr->denom = -denomTemp/gcd;
-  } else
-    myFractionPtr->denom = denomTemp/gcd;
-
-  return myFractionPtr;
 }
 
 int findGCDWanqiC(int n, int m) {
@@ -276,6 +262,33 @@ int findGCDWanqiC(int n, int m) {
       return -gcd;
     else
       return gcd;
+}
+
+FractionPtrWanqi createFractionWanqiC() {
+  int numTemp, denomTemp, gcd;
+  FractionPtrWanqi myFractionPtr = NULL;
+
+  myFractionPtr = (FractionPtrWanqi) malloc(sizeof(FractionWanqi));
+
+  printf("\n\tCreating the Coefficient..."
+         "\n\tPlease Enter the Numerator: ");
+  scanf("%d", &numTemp);
+
+  do {
+    printf("\tPlease Enter a valid Denominator: ");
+    scanf("%d", &denomTemp);
+  } while (denomTemp == 0);
+
+  gcd = findGCDWanqiC(numTemp, denomTemp);
+  myFractionPtr->num = numTemp/gcd;
+
+  if (denomTemp < 0) {
+    myFractionPtr->num = -myFractionPtr->num;
+    myFractionPtr->denom = -denomTemp/gcd;
+  } else
+    myFractionPtr->denom = denomTemp/gcd;
+
+  return myFractionPtr;
 }
 
 PolyTermPtrWanqi createPolyTermWanqiC() {
@@ -311,6 +324,35 @@ PolyNodePtrWanqi createPolyNodeWanqiC() {
   return myPolyNodePtr;
 }
 
+PolyNodePtrWanqi createEmptyPolyNodeWanqiC() {
+  PolyNodePtrWanqi myPolyNodePtr = NULL;
+  PolyTermPtrWanqi tempPolyTermPtr =NULL;
+
+  myPolyNodePtr = (PolyNodePtrWanqi) malloc(sizeof(PolyNodeWanqi));
+  tempPolyTermPtr = (PolyTermPtrWanqi) malloc(sizeof(PolyTermWanqi));
+
+  myPolyNodePtr->ptPtr = tempPolyTermPtr;
+  myPolyNodePtr->next = NULL;
+
+  return myPolyNodePtr;
+}
+
+FractionPtrWanqi addFractionWanqiC(FractionPtrWanqi a, FractionPtrWanqi b) {
+  int gcd, numTemp, denomTemp;
+  FractionPtrWanqi resultFractionPtr = NULL;
+
+  resultFractionPtr = (FractionPtrWanqi) malloc(sizeof(FractionWanqi));
+
+  numTemp = (a->num)*(b->denom) + (b->num)*(a->denom);
+  denomTemp = (a->denom)*(b->denom);
+  gcd = findGCDWanqiC(numTemp, denomTemp);
+
+  resultFractionPtr->num = numTemp/gcd;
+  resultFractionPtr->denom = denomTemp/gcd;
+
+  return resultFractionPtr;
+}
+
 int insertPolyNodeWanqiC(PolyListPtrWanqi myListPtr, 
                                         PolyNodePtrWanqi myNodePtr) {
   int found = 0;
@@ -321,7 +363,7 @@ int insertPolyNodeWanqiC(PolyListPtrWanqi myListPtr,
     *myListPtr = myNodePtr;
   } else if (currentNodePtr->next == NULL){
     //one node in ths list
-    if(myNodePtr->ptPtr->ex == currentNodePtr->ptPtr->ex) {
+    if (myNodePtr->ptPtr->ex == currentNodePtr->ptPtr->ex) {
       //adding the coefficient
       tempFractionPtr = addFractionWanqiC(currentNodePtr->ptPtr->coePtr, 
                                               myNodePtr->ptPtr->coePtr);
@@ -342,7 +384,7 @@ int insertPolyNodeWanqiC(PolyListPtrWanqi myListPtr,
       myNodePtr->next = currentNodePtr;
     } else {
       while(currentNodePtr != NULL && found==0) {
-        if(myNodePtr->ptPtr->ex == currentNodePtr->ptPtr->ex) {
+        if (myNodePtr->ptPtr->ex == currentNodePtr->ptPtr->ex) {
           //adding the coefficient
           tempFractionPtr = addFractionWanqiC(currentNodePtr->ptPtr->coePtr, 
                                                   myNodePtr->ptPtr->coePtr);
@@ -365,30 +407,30 @@ int insertPolyNodeWanqiC(PolyListPtrWanqi myListPtr,
       }
     }
   }
-
   return 1;
 }
 
-FractionPtrWanqi addFractionWanqiC(FractionPtrWanqi a, FractionPtrWanqi b) {
+FractionPtrWanqi multiplyFractionWanqiC(FractionPtrWanqi a, FractionPtrWanqi b) {
   int gcd, numTemp, denomTemp;
-  FractionPtrWanqi resultFractionPtr = NULL;
+  FractionPtrWanqi resultFraction = NULL;
 
-  resultFractionPtr = (FractionPtrWanqi) malloc(sizeof(FractionWanqi));
+  resultFraction = (FractionPtrWanqi) malloc(sizeof(FractionWanqi));
 
-  numTemp = (a->num)*(b->denom) + (b->num)*(a->denom);
+  numTemp = (a->num)*(b->num);
   denomTemp = (a->denom)*(b->denom);
   gcd = findGCDWanqiC(numTemp, denomTemp);
 
-  resultFractionPtr->num = numTemp/gcd;
-  resultFractionPtr->denom = denomTemp/gcd;
+  resultFraction->num = numTemp/gcd;
+  resultFraction->denom = denomTemp/gcd;
 
-  return resultFractionPtr;
+  return resultFraction;
 }
 
 int removePolyNodeWanqiC(PolyListPtrWanqi myPolyListPtr, int order) {
   int found = 0, step = 0;
   PolyNodePtrWanqi prev = NULL;
   PolyNodePtrWanqi cur = *myPolyListPtr; 
+
   while(cur && !found) {
     if (cur->ptPtr->ex == order) {
       if (step == 0)
@@ -410,7 +452,6 @@ int removePolyNodeWanqiC(PolyListPtrWanqi myPolyListPtr, int order) {
     printf("\t\nCan't find the node with order %d!", order);
     return 0; 
   }
-
   return 1;
 }
 
@@ -473,12 +514,8 @@ void displayPolyWanqiC(PolyListWanqi myPolyList) {
 
 PolyListPtrWanqi addPolyWanqiC(PolyListWanqi leftPolyList, PolyListWanqi rightPolyList) {
   PolyListPtrWanqi resultPolyListPtr = (PolyListPtrWanqi) malloc(sizeof(PolyListWanqi));
+  PolyNodePtrWanqi tempPolyNodePtr = createEmptyPolyNodeWanqiC();
 
-  PolyTermPtrWanqi tempPolyTermPtr = (PolyTermPtrWanqi) malloc(sizeof(PolyTermWanqi));
-  PolyNodePtrWanqi tempPolyNodePtr = (PolyNodePtrWanqi) malloc(sizeof(PolyNodeWanqi));
-  tempPolyNodePtr->ptPtr = tempPolyTermPtr;
-
-  tempPolyNodePtr->next = NULL;
   *resultPolyListPtr = tempPolyNodePtr;
 
   PolyNodePtrWanqi currentLeftNodePtr = leftPolyList;
@@ -486,7 +523,7 @@ PolyListPtrWanqi addPolyWanqiC(PolyListWanqi leftPolyList, PolyListWanqi rightPo
 
   FractionPtrWanqi tempFractionPtr = NULL;
 
-  while (currentLeftNodePtr && currentRightNodePtr) {
+  while(currentLeftNodePtr && currentRightNodePtr) {
     
     if (currentLeftNodePtr->ptPtr->ex > currentRightNodePtr->ptPtr->ex) {
       tempPolyNodePtr->ptPtr = currentLeftNodePtr->ptPtr;
@@ -501,17 +538,18 @@ PolyListPtrWanqi addPolyWanqiC(PolyListWanqi leftPolyList, PolyListWanqi rightPo
       currentLeftNodePtr = currentLeftNodePtr->next;
       currentRightNodePtr = currentRightNodePtr->next;
     }
+
     if (currentLeftNodePtr && currentRightNodePtr) {
       tempPolyNodePtr->next = (PolyNodePtrWanqi) malloc(sizeof(PolyNodeWanqi));
       tempPolyNodePtr->next->ptPtr = (PolyTermPtrWanqi) malloc(sizeof(PolyTermWanqi));
-      
+
       tempPolyNodePtr = tempPolyNodePtr->next;
       tempPolyNodePtr->next = NULL;
     }
   }
-  while (currentLeftNodePtr || currentRightNodePtr) {
-    tempPolyNodePtr->next = (PolyNodePtrWanqi) malloc(sizeof(PolyNodeWanqi));
-    tempPolyNodePtr->next->ptPtr = (PolyTermPtrWanqi) malloc(sizeof(PolyTermWanqi));
+
+  while(currentLeftNodePtr || currentRightNodePtr) {
+    tempPolyNodePtr->next = createEmptyPolyNodeWanqiC();
 
     tempPolyNodePtr = tempPolyNodePtr->next;
     tempPolyNodePtr->next = NULL;
@@ -528,62 +566,404 @@ PolyListPtrWanqi addPolyWanqiC(PolyListWanqi leftPolyList, PolyListWanqi rightPo
   return resultPolyListPtr;
 }
 
+PolyListPtrWanqi multiplyPolyWanqiC(PolyListWanqi leftPolyList, PolyListWanqi rightPolyList) {
+  int result;
+  PolyListPtrWanqi resultPolyListPtr = (PolyListPtrWanqi) malloc(sizeof(PolyListWanqi));
+  PolyNodePtrWanqi tempPolyNodePtr = NULL;
 
+  PolyNodePtrWanqi currentLeftNodePtr = leftPolyList;
+  PolyNodePtrWanqi currentRightNodePtr = NULL;
 
+  FractionPtrWanqi tempFractionPtr = NULL;
 
+  while(currentLeftNodePtr) {
+    currentRightNodePtr = rightPolyList;
+    while(currentRightNodePtr) {
+      tempPolyNodePtr = createEmptyPolyNodeWanqiC();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      tempFractionPtr = multiplyFractionWanqiC(currentLeftNodePtr->ptPtr->coePtr, currentRightNodePtr->ptPtr->coePtr);
+      tempPolyNodePtr->ptPtr->coePtr = tempFractionPtr;
+      tempPolyNodePtr->ptPtr->ex = currentLeftNodePtr->ptPtr->ex + currentRightNodePtr->ptPtr->ex;
+      result = insertPolyNodeWanqiC(resultPolyListPtr, tempPolyNodePtr);
+      if (result == 0)
+        printf("\n\t  Something went wrong...");
+      currentRightNodePtr = currentRightNodePtr->next;
+    }
+    currentLeftNodePtr = currentLeftNodePtr->next;
+  }
+  return resultPolyListPtr;
+}
 
 /********************OUTPUT***********************
 
+CIS 27 - Data Structures and Algorithms
+Laney College
+Wanqi Chang
+
+Assignment Information --
+  Assignment Number:  Homework 04,
+                      Coding Assignment -- Excercise #1
+  Written by:         Wanqi Chang
+  Submitted Date:     2016/04/05
 
 
-******************END OF OUTPUT*******************/
+*******************************
+*     POLYNOMIAL OPERATIONS   *
+* 1.  Creating polynomials    *
+* 2.  Adding polynomials      *
+* 3.  Multiplying polynomials *
+* 4.  Displaying polynomials  *
+* 5.  Clearing polynomials    *
+* 6.  Quit                    *
+*******************************
+Select the option (1 through 6): 1
 
 
-/********************COMMENT**********************
+  ***************************
+  *     CREATE POLYNOMIAL   *
+  * 1.  Left Polynomial     *
+  * 2.  Right polynomial    *
+  * 3.  Back                *
+  ***************************
+  Select the option (1 through 3): 1
 
-                    NO COMMENT
+  Creating a Term...
+  Please Enter the order: 0
 
-**************************************************/
+  Creating the Coefficient...
+  Please Enter the Numerator: 5
+  Please Enter a valid Denominator: 12
+
+  Poly Node successfully inserted!
+
+  ***************************
+  *     CREATE POLYNOMIAL   *
+  * 1.  Left Polynomial     *
+  * 2.  Right polynomial    *
+  * 3.  Back                *
+  ***************************
+  Select the option (1 through 3): 1
+
+  Creating a Term...
+  Please Enter the order: 2
+
+  Creating the Coefficient...
+  Please Enter the Numerator: 1
+  Please Enter a valid Denominator: 1
+
+  Poly Node successfully inserted!
+
+  ***************************
+  *     CREATE POLYNOMIAL   *
+  * 1.  Left Polynomial     *
+  * 2.  Right polynomial    *
+  * 3.  Back                *
+  ***************************
+  Select the option (1 through 3): 1
+
+  Creating a Term...
+  Please Enter the order: 1
+
+  Creating the Coefficient...
+  Please Enter the Numerator: 3
+  Please Enter a valid Denominator: 4
+
+  Poly Node successfully inserted!
+
+  ***************************
+  *     CREATE POLYNOMIAL   *
+  * 1.  Left Polynomial     *
+  * 2.  Right polynomial    *
+  * 3.  Back                *
+  ***************************
+  Select the option (1 through 3): 2
+
+  Creating a Term...
+  Please Enter the order: 2
+
+  Creating the Coefficient...
+  Please Enter the Numerator: 3
+  Please Enter a valid Denominator: -7
+
+  Poly Node successfully inserted!
+
+  ***************************
+  *     CREATE POLYNOMIAL   *
+  * 1.  Left Polynomial     *
+  * 2.  Right polynomial    *
+  * 3.  Back                *
+  ***************************
+  Select the option (1 through 3): 2
+
+  Creating a Term...
+  Please Enter the order: 0
+
+  Creating the Coefficient...
+  Please Enter the Numerator: 2
+  Please Enter a valid Denominator: 11
+
+  Poly Node successfully inserted!
+
+  ***************************
+  *     CREATE POLYNOMIAL   *
+  * 1.  Left Polynomial     *
+  * 2.  Right polynomial    *
+  * 3.  Back                *
+  ***************************
+  Select the option (1 through 3): 2
+
+  Creating a Term...
+  Please Enter the order: 1
+
+  Creating the Coefficient...
+  Please Enter the Numerator: 4
+  Please Enter a valid Denominator: 9
+
+  Poly Node successfully inserted!
+
+  ***************************
+  *     CREATE POLYNOMIAL   *
+  * 1.  Left Polynomial     *
+  * 2.  Right polynomial    *
+  * 3.  Back                *
+  ***************************
+  Select the option (1 through 3): 2
+
+  Creating a Term...
+  Please Enter the order: 4
+
+  Creating the Coefficient...
+  Please Enter the Numerator: 1
+  Please Enter a valid Denominator: 1
+
+  Poly Node successfully inserted!
+
+  ***************************
+  *     CREATE POLYNOMIAL   *
+  * 1.  Left Polynomial     *
+  * 2.  Right polynomial    *
+  * 3.  Back                *
+  ***************************
+  Select the option (1 through 3): 3
+
+
+*******************************
+*     POLYNOMIAL OPERATIONS   *
+* 1.  Creating polynomials    *
+* 2.  Adding polynomials      *
+* 3.  Multiplying polynomials *
+* 4.  Displaying polynomials  *
+* 5.  Clearing polynomials    *
+* 6.  Quit                    *
+*******************************
+Select the option (1 through 6): 4
+
+  Left Poly Pointer: 0x7fac38500030
+    1/1x2 + 3/4x + 5/12
+  Right Poly Pointer: 0x7fac38500110
+    1/1x4 - 3/7x2 + 4/9x + 2/11
+  Lastest Add Result Pointer
+  (perform another add operation to see the new result): 0x0
+    Empty List!
+  Lastest Multiply Result Pointer
+  (perform another add operation to see the new result): 0x0
+    Empty List!
+
+*******************************
+*     POLYNOMIAL OPERATIONS   *
+* 1.  Creating polynomials    *
+* 2.  Adding polynomials      *
+* 3.  Multiplying polynomials *
+* 4.  Displaying polynomials  *
+* 5.  Clearing polynomials    *
+* 6.  Quit                    *
+*******************************
+Select the option (1 through 6): 2
+
+  Adding the Polynomials...
+  Done!
+
+*******************************
+*     POLYNOMIAL OPERATIONS   *
+* 1.  Creating polynomials    *
+* 2.  Adding polynomials      *
+* 3.  Multiplying polynomials *
+* 4.  Displaying polynomials  *
+* 5.  Clearing polynomials    *
+* 6.  Quit                    *
+*******************************
+Select the option (1 through 6): 3
+
+  Multiplying the Polynomials...
+  Done!
+
+*******************************
+*     POLYNOMIAL OPERATIONS   *
+* 1.  Creating polynomials    *
+* 2.  Adding polynomials      *
+* 3.  Multiplying polynomials *
+* 4.  Displaying polynomials  *
+* 5.  Clearing polynomials    *
+* 6.  Quit                    *
+*******************************
+Select the option (1 through 6): 4
+
+  Left Poly Pointer: 0x7fac38500030
+    1/1x2 + 3/4x + 5/12
+  Right Poly Pointer: 0x7fac38500110
+    1/1x4 - 3/7x2 + 4/9x + 2/11
+  Lastest Add Result Pointer
+  (perform another add operation to see the new result): 0x7fac38500150
+    1/1x4 + 4/7x2 + 43/36x + 79/132
+  Lastest Multiply Result Pointer
+  (perform another add operation to see the new result): 0x7fac38500210
+    1/1x6 + 3/4x5 - 1/84x4 + 31/252x3 + 311/924x2 + 191/594x + 5/66
+
+*******************************
+*     POLYNOMIAL OPERATIONS   *
+* 1.  Creating polynomials    *
+* 2.  Adding polynomials      *
+* 3.  Multiplying polynomials *
+* 4.  Displaying polynomials  *
+* 5.  Clearing polynomials    *
+* 6.  Quit                    *
+*******************************
+Select the option (1 through 6): 5
+
+
+  ***************************
+  *     CLEAR POLYNOMIAL    *
+  * 1.  Left Polynomial     *
+  * 2.  Right polynomial    *
+  * 3.  Back                *
+  ***************************
+  Select the option (1 through 3): 1
+
+  Removing from the Left Polynomial...
+  Which order would you like to remove: 0
+
+  Done!
+
+  ***************************
+  *     CLEAR POLYNOMIAL    *
+  * 1.  Left Polynomial     *
+  * 2.  Right polynomial    *
+  * 3.  Back                *
+  ***************************
+  Select the option (1 through 3): 2
+
+  Removing from the Right Polynomial...
+  Which order would you like to remove: 0
+
+  Done!
+
+  ***************************
+  *     CLEAR POLYNOMIAL    *
+  * 1.  Left Polynomial     *
+  * 2.  Right polynomial    *
+  * 3.  Back                *
+  ***************************
+  Select the option (1 through 3): 3
+
+
+*******************************
+*     POLYNOMIAL OPERATIONS   *
+* 1.  Creating polynomials    *
+* 2.  Adding polynomials      *
+* 3.  Multiplying polynomials *
+* 4.  Displaying polynomials  *
+* 5.  Clearing polynomials    *
+* 6.  Quit                    *
+*******************************
+Select the option (1 through 6): 4
+
+  Left Poly Pointer: 0x7fac38500030
+    1/1x2 + 3/4x
+  Right Poly Pointer: 0x7fac38500110
+    1/1x4 - 3/7x2 + 4/9x
+  Lastest Add Result Pointer
+  (perform another add operation to see the new result): 0x7fac38500150
+    1/1x4 + 4/7x2 + 43/36x + 79/132
+  Lastest Multiply Result Pointer
+  (perform another add operation to see the new result): 0x7fac38500210
+    1/1x6 + 3/4x5 - 1/84x4 + 31/252x3 + 311/924x2 + 191/594x + 5/66
+
+*******************************
+*     POLYNOMIAL OPERATIONS   *
+* 1.  Creating polynomials    *
+* 2.  Adding polynomials      *
+* 3.  Multiplying polynomials *
+* 4.  Displaying polynomials  *
+* 5.  Clearing polynomials    *
+* 6.  Quit                    *
+*******************************
+Select the option (1 through 6): 2
+
+  Adding the Polynomials...
+  Done!
+
+*******************************
+*     POLYNOMIAL OPERATIONS   *
+* 1.  Creating polynomials    *
+* 2.  Adding polynomials      *
+* 3.  Multiplying polynomials *
+* 4.  Displaying polynomials  *
+* 5.  Clearing polynomials    *
+* 6.  Quit                    *
+*******************************
+Select the option (1 through 6): 3
+
+  Multiplying the Polynomials...
+  Done!
+
+*******************************
+*     POLYNOMIAL OPERATIONS   *
+* 1.  Creating polynomials    *
+* 2.  Adding polynomials      *
+* 3.  Multiplying polynomials *
+* 4.  Displaying polynomials  *
+* 5.  Clearing polynomials    *
+* 6.  Quit                    *
+*******************************
+Select the option (1 through 6): 4
+
+  Left Poly Pointer: 0x7fac38500030
+    1/1x2 + 3/4x
+  Right Poly Pointer: 0x7fac38500110
+    1/1x4 - 3/7x2 + 4/9x
+  Lastest Add Result Pointer
+  (perform another add operation to see the new result): 0x7fac385000d0
+    1/1x4 + 4/7x2 + 43/36x
+  Lastest Multiply Result Pointer
+  (perform another add operation to see the new result): 0x7fac385004a0
+    1/1x6 + 3/4x5 - 3/7x4 + 31/252x3 + 1/3x2
+
+*******************************
+*     POLYNOMIAL OPERATIONS   *
+* 1.  Creating polynomials    *
+* 2.  Adding polynomials      *
+* 3.  Multiplying polynomials *
+* 4.  Displaying polynomials  *
+* 5.  Clearing polynomials    *
+* 6.  Quit                    *
+*******************************
+Select the option (1 through 6): 6
+
+  Having Fun!                        
+
+*********************END OF OUTPUT********************/
+
+/***********************COMMENT************************
+
+  Different approaches were used when implementing
+  adding and multiplying functions.
+
+  adding assumes that there's no previous implementation 
+  of the function insertPolyNodeWanqiC() while multiplying
+  takes advantage of the function in order to ensure
+  that the resulting polynomial is in the decsending
+  order based on the value of the exponents.
+
+  very good excercise!
+
+******************************************************/
